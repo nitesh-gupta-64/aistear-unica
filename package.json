@@ -5,7 +5,6 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@material-ui/icons": "^4.11.3",
     "@material/dialog": "^14.0.0",
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.18",
@@ -49,7 +48,6 @@
   },
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "index.js",
-  "devDependencies": {},
   "author": "",
   "license": "ISC"
 }
