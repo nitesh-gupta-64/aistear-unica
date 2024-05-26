@@ -44,7 +44,8 @@
 .createBlogForm input, .createBlogForm select, .tagInput {
     width: 95%;
     height: 2.8rem;
-    padding-left: 1rem;   
+    padding-left: 1rem;
+       
 }
 
 .createBlogForm label {
