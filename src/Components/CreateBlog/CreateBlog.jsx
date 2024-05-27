@@ -18,10 +18,9 @@ import {
   Paper,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import author1 from "../../assets/images/author.png";
+import addIcon from "../../assets/images/addIcon.png";
 import { useNavigate } from "react-router-dom";
 import {
-  QuerySnapshot,
   addDoc,
   collection,
   doc,
@@ -32,13 +31,13 @@ import {
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { db, storage } from "../../firebase/firebase";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [summary, setSummary] = useState("");
-  const { mode, blogData } = window.location.state || {};
+  // const { blogData } = window.location.state || {};
   const [description, setDescription] = useState("");
   const [isFeatured, setIsFeatured] = useState("");
   const [ifImage, setIfImage] = useState(null);
@@ -73,7 +72,7 @@ const CreateBlog = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
   const [blogs, setBlogs] = useState([]);
-  const [type, setType] = useState("image");
+  const [type, setType] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -90,31 +89,25 @@ const CreateBlog = () => {
       setAuthors(
         authorsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
       );
-
-      const archiveSnapshot = await getDocs(collection(db, "archive"));
-      setArchive(
-        archiveSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-      );
     };
     console.log("fetchDatauseeffect");
 
+    const fetchArchive = async () => {
+      try {
+        const archiveRef = collection(db, "archives");
+        const querySnapshot = await getDocs(archiveRef);
+        const archiveData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setArchive(archiveData);
+      } catch (error) {
+        console.error("Error fetching archive:", error);
+      }
+    };
     fetchData();
-
-    if (mode === "edit" && blogData) {
-      setTitle(blogData.title);
-      setSlug(blogData.slug);
-      setSummary(blogData.summary);
-      setDescription(blogData.description);
-      setCategory(blogData.category);
-      setSelectedTags(blogData.tags);
-      setAuthor(blogData.seo.seoauthor);
-      setSeoTitle(blogData.seo.title);
-      setSeoDescription(blogData.seo.description);
-      setSeoKeywords(blogData.seo.keywords);
-      setImagePreview(blogData.image);
-      setSeoImagePreview(blogData.seo.image);
-    }
-  }, [mode, blogData]);
+    fetchArchive();
+  }, []);
 
   useEffect(() => {
     console.log("useEffectSLUG");
@@ -154,21 +147,41 @@ const CreateBlog = () => {
     );
   };
 
-  const handleImageArchiveChange = async (e) => {
+  const handleImageUpload = async (file) => {
+    const storage = getStorage();
+    const storageRef = ref(storage, `blogs/${file.name}`);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+  };
+
+  const handleImageArchiveChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const newArchiveItem = {
-        Image: URL.createObjectURL(file),
-      };
-      setArchive([...archive, newArchiveItem]);
+    handleSaveImageToArchive(file);
+  };
+
+  const handleSaveImageToArchive = async (file) => {
+    try {
+      const imageURL = await handleImageUpload(file);
+      const archiveRef = collection(db, "archives");
+      await addDoc(archiveRef, {
+        ImageUrl: imageURL,
+      });
+      console.log(imageURL);
+      setArchive((prevArchive) => [...prevArchive, { Image: imageURL }]);
+      console.log(archive);
+      toast.success("Image saved to archive successfully!");
+    } catch (error) {
+      console.error("Error saving image to archive:", error);
+      toast.error("Error saving image to archive. Please try again.");
     }
   };
 
-  const handleSetArchiveImage = (imageUrl) => {
-    if (archiveOrUpload === "image") {
-      setImagePreview(imageUrl);
-    } else {
-      setSeoImagePreview(imageUrl);
+  const handleSetArchiveImage = (url) => {
+    if (type === "image") {
+      setImagePreview(url);
+    } else if (type == "seoImage") {
+      setSeoImagePreview(url);
     }
     setOpenDialog(false);
   };
@@ -176,7 +189,6 @@ const CreateBlog = () => {
   const handleOpenDialog = (type) => {
     setType(type);
     setOpenDialog(true);
-    setArchiveOrUpload(type);
   };
 
   const handleCloseDialog = () => {
@@ -276,7 +288,6 @@ const CreateBlog = () => {
     }
   };
 
-
   // const fetchBlogs = async () => {
   //   try {
   //     const querySnapshot = await getDocs(collection(db, "blogs"));
@@ -297,64 +308,164 @@ const CreateBlog = () => {
 
   // console.log(blogs);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setLoading(true);
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  //   setLoading(true);
+  //   try {
+  //     const imageRef = ref(
+  //       storage,
+  //       `uploads/images/featured/${Date.now()}-${
+  //         image.name || imagePreview.name
+  //       }`
+  //     );
+  //     await uploadBytes(imageRef, image || imagePreview);
+  //     const imageRef2 = ref(
+  //       storage,
+  //       `uploads/images/seo/${Date.now()}-${
+  //         seoImage.name || seoImagePreview.name
+  //       }`
+  //     );
+  //     await uploadBytes(imageRef2, seoImage || seoImagePreview);
+  //     const imageUrl = await getDownloadURL(imageRef);
+  //     const imageUrl1 = await getDownloadURL(imageRef2);
+  //     const blog = {
+  //       title,
+  //       slug,
+  //       summary,
+  //       description,
+  //       category,
+  //       image: imagePreview || image,
+  //       imageUrl: imageUrl,
+  //       seo: {
+  //         title: seoTitle,
+  //         description: seoDescription,
+  //         image: seoImagePreview || seoImage,
+  //         imageUrl: imageUrl1,
+  //         keywords: seoKeywords,
+  //         seoauthor: author,
+  //       },
+  //       tags: selectedTags,
+  //       createdAt: serverTimestamp(),
+  //     };
+
+  //     const blogsRef = collection(db, "blogs");
+  //     await addDoc(blogsRef, blog);
+
+  //     const archiveRef = collection(db, "archives");
+  //     await addDoc(archiveRef, {
+  //       ImageUrl: imageUrl,
+  //     });
+  //     await addDoc(archiveRef, {
+  //       ImageUrl: imageUrl1,
+  //     });
+  //     setArchive((prevArchive) => [...prevArchive, { Image: imageUrl }]);
+  //     setArchive((prevArchive) => [...prevArchive, { Image: imageUrl1 }]);
+
+  //     toast.success("Blog added successfully!");
+
+  //     setTitle("");
+  //     setSlug("");
+  //     setDescription("");
+  //     setSummary("");
+  //     setCategory("");
+  //     setImagePreview(null)
+  //     setSeoImagePreview(null)
+  //     setImage(null);
+  //     setSeoTitle("");
+  //     setSeoDescription("");
+  //     setKeywordInput("");
+  //     setSeoKeywords([]);
+  //     setSelectedTags([]);
+  //     setAuthor("");
+  //     setSeoImage(null);
+  //   } catch (error) {
+  //     console.error("Error submitting blog:", error);
+  //     toast.error("Error submitting blog. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleImageUploadToArchive = async (file) => {
+    const storage = getStorage();
+    const storageRef = ref(storage, `archive/${file.name}`);
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      console.log("error while storage");
-      const imageRef = ref(
-        storage,
-        `uploads/images/featured/${Date.now()}-${
-          image.name || imagePreview.name
-        }`
-      );
-      const uploadResult = await uploadBytes(imageRef, image || imagePreview);
-      const imageRef2 = ref(
-        storage,
-        `uploads/images/seo/${Date.now()}-${
-          seoImage.name || seoImagePreview.name
-        }`
-      );
-      const uploadResult2 = await uploadBytes(
-        imageRef2,
-        seoImage || seoImagePreview
-      );
-      console.log("error after storage");
-      const blog = {
+      setLoading(true);
+
+      let imageURL = "";
+      if (image) {
+        imageURL = await handleImageUpload(image);
+      } else {
+        imageURL = imagePreview;
+      }
+      let seoImageURL = "";
+      if (seoImage) {
+        seoImageURL = await handleImageUpload(seoImage);
+      } else {
+        seoImageURL = seoImagePreview;
+      }
+      if (image) {
+        const archiveURL = await handleImageUploadToArchive(image);
+        const archiveRef = collection(db, "archive");
+        await addDoc(archiveRef, {
+          Image: archiveURL,
+        });
+      }
+      if (seoImage) {
+        const archiveURL = await handleImageUploadToArchive(seoImage);
+        const archiveRef = collection(db, "archive");
+        await addDoc(archiveRef, {
+          Image: archiveURL,
+        });
+      }
+
+      const blogsRef = collection(db, "blogs");
+      await addDoc(blogsRef, {
         title,
         slug,
-        summary,
         description,
+        summary,
         category,
-        image: imagePreview || image,
-        imageUrl: uploadResult.ref.fullPath,
+        image: imageURL,
+        tags: selectedTags,
         seo: {
           title: seoTitle,
           description: seoDescription,
-          image: seoImagePreview || seoImage,
-          imageUrl: uploadResult2.ref.fullPath,
           keywords: seoKeywords,
+          image: seoImageURL,
           seoauthor: author,
         },
-        tags: selectedTags,
         createdAt: serverTimestamp(),
-      };
-
-      if (mode === "edit") {
-        const blogRef = doc(db, "blogs", blogData.id);
-        await updateDoc(blogRef, blog);
-        toast.success("Blog updated successfully!");
-      } else {
-        const blogsRef = collection(db, "blogs");
-        await addDoc(blogsRef, blog);
-        toast.success("Blog added successfully!");
-      }
-      navigate("/allblogs");
-    } catch (error) {
-      console.error("Error submitting blog:", error);
-      toast.error("Error submitting blog. Please try again.");
-    } finally {
+      });
       setLoading(false);
+      toast.success("Blog added successfully!");
+
+      setTitle("");
+      setSlug("");
+      setDescription("");
+      setSummary("");
+      setCategory("");
+      setImage(null);
+      setSeoTitle("");
+      setSeoDescription("");
+      setKeywordInput("");
+      setSeoKeywords([]);
+      setSelectedTags([]);
+      setAuthor("");
+      setSeoImage(null);
+      setImagePreview(null)
+      setSeoImagePreview(null)
+    } catch (error) {
+      setLoading(false);
+      console.error("Error adding blog:", error);
+      toast.error("Failed to add blog. Please try again.");
     }
   };
 
@@ -416,7 +527,7 @@ const CreateBlog = () => {
         <div className="editor">
           <Editor
             apiKey="z7gazwufigwwq500owylijq0vfodueg4e17noaid9895p4fi"
-            initialValue={mode === "edit" ? blogData.description : ""}
+            initialValue=""
             init={{
               height: 500,
               menubar: true,
@@ -639,13 +750,12 @@ const CreateBlog = () => {
             <label htmlFor="file-archive-upload">
               <Paper sx={{ p: 2, m: 1, cursor: "pointer" }}>
                 <img
-                  src={author1}
+                  src={addIcon}
                   alt="Archive"
                   style={{
                     width: 200,
                     height: 200,
                     objectFit: "contain",
-                    filter: "brightness(0) invert(1)",
                   }}
                 />
                 <input
@@ -662,11 +772,11 @@ const CreateBlog = () => {
                 key={index}
                 sx={{ p: 2, m: 1, cursor: "pointer" }}
                 onClick={() => {
-                  handleSetArchiveImage(item.Image);
+                  handleSetArchiveImage(item.ImageUrl);
                 }}
               >
                 <img
-                  src={item.Image}
+                  src={item.ImageUrl}
                   alt="Archive"
                   style={{
                     width: 200,
@@ -805,124 +915,6 @@ const CreateBlog = () => {
             Add
           </Button>
         </DialogActions>
-      </Dialog>
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        sx={{
-          height: "80%",
-          width: "80%",
-          overflow: "auto",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          sx={{ p: 2 }}
-        >
-          <Button
-            color="secondary"
-            variant={archiveOrUpload === "upload" ? "contained" : "outlined"}
-            onClick={() => setArchiveOrUpload("upload")}
-          >
-            Upload
-          </Button>
-          <Button
-            color="secondary"
-            variant={archiveOrUpload === "upload" ? "outlined" : "contained"}
-            onClick={() => setArchiveOrUpload("archive")}
-          >
-            Archive
-          </Button>
-        </Box>
-
-        {archiveOrUpload === "upload" ? (
-          <label htmlFor="file-upload">
-            <Box
-              p={1}
-              display="flex"
-              justifyContent={"center"}
-              alignItems={"center"}
-              style={{ cursor: "pointer", width: 200, height: 200 }}
-            >
-              <CloudUploadIcon />
-              <Typography
-                ml={1}
-                mt={1}
-                variant="h5"
-                gutterBottom
-                style={{ cursor: "pointer" }}
-              >
-                Upload
-              </Typography>
-              <input
-                id="file-upload"
-                hidden
-                accept="image/*"
-                type="file"
-                onChange={(e) => {
-                  if (type === "image") {
-                    setImage(e.target.files[0]);
-                    setImagePreview(URL.createObjectURL(e.target.files[0]));
-                  } else {
-                    setSeoImage(e.target.files[0]);
-                    setSeoImagePreview(URL.createObjectURL(e.target.files[0]));
-                  }
-                  setOpenDialog(false);
-                }}
-              />
-            </Box>
-          </label>
-        ) : (
-          <Box
-            p={2}
-            display={"flex"}
-            justifyContent={"center"}
-            alignItems={"center"}
-            flexWrap={"wrap"}
-          >
-            <label htmlFor="file-archive-upload">
-              <Paper sx={{ p: 2, m: 1, cursor: "pointer" }}>
-                <img
-                  src={author1}
-                  alt="Archive"
-                  style={{
-                    width: 200,
-                    height: 200,
-                    objectFit: "contain",
-                    filter: "brightness(0) invert(1)",
-                  }}
-                />
-                <input
-                  id="file-archive-upload"
-                  hidden
-                  accept="image/*"
-                  type="file"
-                  onChange={handleImageArchiveChange}
-                />
-              </Paper>
-            </label>
-            {archive.map((item, index) => (
-              <Paper
-                key={index}
-                sx={{ p: 2, m: 1, cursor: "pointer" }}
-                onClick={() => {
-                  handleSetArchiveImage(item.Image);
-                }}
-              >
-                <img
-                  src={item.Image}
-                  alt="Archive"
-                  style={{ width: 200, height: 200, objectFit: "contain" }}
-                />
-              </Paper>
-            ))}
-          </Box>
-        )}
       </Dialog>
     </div>
   );
