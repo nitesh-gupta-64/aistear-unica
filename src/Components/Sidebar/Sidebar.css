@@ -86,6 +86,7 @@
   
     .sideblur + div {
       filter: opacity(0);
+      display: none;
     }
 
     .sidebar + div {
