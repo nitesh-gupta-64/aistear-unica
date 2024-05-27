@@ -50,3 +50,6 @@ button, a {
   gap: 1rem;
 }
 
+input, textarea, select {
+  font-size: 16px;
+}
