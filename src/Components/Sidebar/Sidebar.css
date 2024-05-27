@@ -91,7 +91,7 @@
     .sidebar + div {
         width: 90%;
     }
-    .hero {
+    .hero > div:nth-child(2) {
         justify-content: center;
     }
 }
