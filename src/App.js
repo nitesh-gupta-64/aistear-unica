@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 import CreateBlog from "./Screens/CreateBlog/CreateBlog";
 import SearchBar from "./Components/SearchBar/SearchBar";
 import HeadTitle from "./Components/HeadTitle/HeadTitle";
+import ShowBlogs from "./Screens/ShowBlogs/ShowBlogs";
 
 function App() {
   const sidebar = useRef(null);
@@ -27,6 +28,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard setHeadTitle = {setHeadTitle} />} />
             <Route path="/createblog" element={<CreateBlog setHeadTitle = {setHeadTitle} />} />
+            <Route path="/showblog" element={<ShowBlogs setHeadTitle = {setHeadTitle}/>} />
           </Routes>
         </div>
       </div>

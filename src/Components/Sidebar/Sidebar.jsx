@@ -58,7 +58,7 @@ const Sidebar = ({sidebar}) => {
         <h2>Blogs</h2>
         <div>
           <img src={blog}/>
-          <Link>Show Blogs</Link>
+          <Link to='/showblog'>Show Blogs</Link>
         </div>
         <div>
           <img src={blog}/>
