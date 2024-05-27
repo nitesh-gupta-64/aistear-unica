@@ -50,6 +50,12 @@ button, a {
   gap: 1rem;
 }
 
+.hero > div:nth-child(1) {
+  height: 5rem;
+  display: flex;
+  gap: 5rem;
+}
+
 input, textarea, select {
   font-size: 16px;
 }

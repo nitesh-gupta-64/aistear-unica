@@ -110,10 +110,6 @@ const CreateBlog = ({setHeadTitle}) => {
     fetchData();
     fetchArchive();
   }, []);
-
-  useEffect(() => {
-    console.log(archive)
-  }, [archive])
   
 
   useEffect(() => {

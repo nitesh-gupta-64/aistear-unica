@@ -5,7 +5,6 @@ import { Link, useLocation } from 'react-router-dom'
 const Header = ( { sidebar, isOpen, setIsOpen } ) => {
 
   const toggle = useRef(null)
-  const location = useLocation()
 
   const toggleHandler = () => {
       
@@ -24,10 +23,6 @@ const Header = ( { sidebar, isOpen, setIsOpen } ) => {
     setIsOpen(!isOpen)
   }
 
-  useEffect(() => {
-    toggleHandler();
-  }, [location.pathname])
-  
 
   // const toggleHandler = () => {
   //   const sidebar = document.querySelector('.sidebar');

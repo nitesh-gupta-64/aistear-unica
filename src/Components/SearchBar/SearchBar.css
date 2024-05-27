@@ -1,0 +1,22 @@
+.searchBar {
+    width: 72%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 7rem;
+    right: 4rem;
+}
+
+.searchBar input {
+    height: 2.5rem;
+    width: 100%;
+    padding-left: 1rem;
+}
+
+@media screen and (max-width: 1000px) {
+    .searchBar {
+        position: static;
+        width: 100%;
+    }
+}
