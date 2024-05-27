@@ -39,6 +39,7 @@ const CreateBlog = () => {
   const [summary, setSummary] = useState("");
   // const { blogData } = window.location.state || {};
   const [description, setDescription] = useState("");
+  const [editorDescription, setEditorDescription] = useState("");
   const [isFeatured, setIsFeatured] = useState("");
   const [ifImage, setIfImage] = useState(null);
   const [category, setCategory] = useState("");
@@ -130,7 +131,7 @@ const CreateBlog = () => {
   }, [newAuthor]);
 
   const handleEditorChange = (content) => {
-    setDescription(content);
+    setEditorDescription(content);
   };
 
   const handleKeywordInputKeyPress = (event) => {
@@ -148,8 +149,27 @@ const CreateBlog = () => {
   };
 
   const handleImageUpload = async (file) => {
-    const storage = getStorage();
-    const storageRef = ref(storage, `blogs/${file.name}`);
+    const storageRef = ref(
+      storage,
+      `/adminPanel/blogs/${slug}/images/${file.name}`
+    );
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+  };
+
+  const handleSeoImageUpload = async (file) => {
+    const storageRef = ref(
+      storage,
+      `/adminPanel/blogs/${slug}/seoImages/${file.name}`
+    );
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+  };
+
+  const handleArchiveImageUpload = async (file) => {
+    const storageRef = ref(storage, `/adminPanel/archiveImages/${file.name}`);
     await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(storageRef);
     return downloadURL;
@@ -162,7 +182,7 @@ const CreateBlog = () => {
 
   const handleSaveImageToArchive = async (file) => {
     try {
-      const imageURL = await handleImageUpload(file);
+      const imageURL = await handleArchiveImageUpload(file);
       const archiveRef = collection(db, "archives");
       await addDoc(archiveRef, {
         ImageUrl: imageURL,
@@ -288,104 +308,6 @@ const CreateBlog = () => {
     }
   };
 
-  // const fetchBlogs = async () => {
-  //   try {
-  //     const querySnapshot = await getDocs(collection(db, "blogs"));
-  //     const blogArray = [];
-  //     querySnapshot.docs.map((doc) => {
-  //       blogArray.push(doc.data());
-  //       console.log(doc.data());
-  //     });
-  //     setBlogs(blogArray);
-  //   } catch (error) {
-  //     console.error("Error fetching collection: ", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchBlogs();
-  // }, []);
-
-  // console.log(blogs);
-
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-  //   setLoading(true);
-  //   try {
-  //     const imageRef = ref(
-  //       storage,
-  //       `uploads/images/featured/${Date.now()}-${
-  //         image.name || imagePreview.name
-  //       }`
-  //     );
-  //     await uploadBytes(imageRef, image || imagePreview);
-  //     const imageRef2 = ref(
-  //       storage,
-  //       `uploads/images/seo/${Date.now()}-${
-  //         seoImage.name || seoImagePreview.name
-  //       }`
-  //     );
-  //     await uploadBytes(imageRef2, seoImage || seoImagePreview);
-  //     const imageUrl = await getDownloadURL(imageRef);
-  //     const imageUrl1 = await getDownloadURL(imageRef2);
-  //     const blog = {
-  //       title,
-  //       slug,
-  //       summary,
-  //       description,
-  //       category,
-  //       image: imagePreview || image,
-  //       imageUrl: imageUrl,
-  //       seo: {
-  //         title: seoTitle,
-  //         description: seoDescription,
-  //         image: seoImagePreview || seoImage,
-  //         imageUrl: imageUrl1,
-  //         keywords: seoKeywords,
-  //         seoauthor: author,
-  //       },
-  //       tags: selectedTags,
-  //       createdAt: serverTimestamp(),
-  //     };
-
-  //     const blogsRef = collection(db, "blogs");
-  //     await addDoc(blogsRef, blog);
-
-  //     const archiveRef = collection(db, "archives");
-  //     await addDoc(archiveRef, {
-  //       ImageUrl: imageUrl,
-  //     });
-  //     await addDoc(archiveRef, {
-  //       ImageUrl: imageUrl1,
-  //     });
-  //     setArchive((prevArchive) => [...prevArchive, { Image: imageUrl }]);
-  //     setArchive((prevArchive) => [...prevArchive, { Image: imageUrl1 }]);
-
-  //     toast.success("Blog added successfully!");
-
-  //     setTitle("");
-  //     setSlug("");
-  //     setDescription("");
-  //     setSummary("");
-  //     setCategory("");
-  //     setImagePreview(null)
-  //     setSeoImagePreview(null)
-  //     setImage(null);
-  //     setSeoTitle("");
-  //     setSeoDescription("");
-  //     setKeywordInput("");
-  //     setSeoKeywords([]);
-  //     setSelectedTags([]);
-  //     setAuthor("");
-  //     setSeoImage(null);
-  //   } catch (error) {
-  //     console.error("Error submitting blog:", error);
-  //     toast.error("Error submitting blog. Please try again.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleImageUploadToArchive = async (file) => {
     const storage = getStorage();
     const storageRef = ref(storage, `archive/${file.name}`);
@@ -407,7 +329,7 @@ const CreateBlog = () => {
       }
       let seoImageURL = "";
       if (seoImage) {
-        seoImageURL = await handleImageUpload(seoImage);
+        seoImageURL = await handleSeoImageUpload(seoImage);
       } else {
         seoImageURL = seoImagePreview;
       }
@@ -431,6 +353,8 @@ const CreateBlog = () => {
         title,
         slug,
         description,
+        editorDescription,
+        isFeatured,
         summary,
         category,
         image: imageURL,
@@ -450,6 +374,8 @@ const CreateBlog = () => {
       setTitle("");
       setSlug("");
       setDescription("");
+      setEditorDescription("")
+      setIsFeatured("")
       setSummary("");
       setCategory("");
       setImage(null);
@@ -460,8 +386,8 @@ const CreateBlog = () => {
       setSelectedTags([]);
       setAuthor("");
       setSeoImage(null);
-      setImagePreview(null)
-      setSeoImagePreview(null)
+      setImagePreview(null);
+      setSeoImagePreview(null);
     } catch (error) {
       setLoading(false);
       console.error("Error adding blog:", error);
@@ -561,16 +487,21 @@ const CreateBlog = () => {
               Add Category
             </Button>
           </div>
-          <select
+          <TextField
+            style={{ width: "95%" }}
+            fullWidth
+            variant="outlined"
+            select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
+            sx={{ mb: 2 }}
           >
             {categories.map((cat) => (
-              <option key={cat.id} value={cat.name}>
+              <MenuItem key={cat.id} value={cat.name}>
                 {cat.name}
-              </option>
+              </MenuItem>
             ))}
-          </select>
+          </TextField>
           <div>
             <label>Tags</label>
             <Button onClick={() => setTagDialogOpen(true)}>Add Tag</Button>
@@ -606,22 +537,30 @@ const CreateBlog = () => {
           <label>Seo Data</label>
           <div className="seoTable">
             <label>SEO Title</label>
-            <input type="text" />
+            <input type="text" onChange={(e) => {setSeoTitle(e.target.value)}} />
             <label>SEO Description</label>
-            <input type="text" />
+            <input type="text" onChange={(e) => {setSeoDescription(e.target.value)}} />
             <div>
               <label>SEO Author</label>
               <Button onClick={() => setAuthorDialogOpen(true)}>
                 Add Author
               </Button>
             </div>
-            <select>
+            <TextField
+              style={{ width: "95%" }}
+              fullWidth
+              variant="outlined"
+              select
+              value={author}
+              onChange={(e) => setAuthor(e.target.value)}
+              sx={{ mb: 2 }}
+            >
               {authors.map((auth) => (
-                <option key={auth.id} value={auth.name}>
+                <MenuItem key={auth.id} value={auth.name}>
                   {auth.name}
-                </option>
+                </MenuItem>
               ))}
-            </select>
+            </TextField>
             <label>SEO Image</label>
             <Button
               style={{ width: "100%" }}

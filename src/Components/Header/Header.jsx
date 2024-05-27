@@ -1,10 +1,11 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import './Header.css'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 const Header = ( { sidebar, isOpen, setIsOpen } ) => {
 
   const toggle = useRef(null)
+  const location = useLocation()
 
   const toggleHandler = () => {
       
@@ -23,6 +24,10 @@ const Header = ( { sidebar, isOpen, setIsOpen } ) => {
     setIsOpen(!isOpen)
   }
 
+  useEffect(() => {
+    toggleHandler();
+  }, [location.pathname])
+  
 
   // const toggleHandler = () => {
   //   const sidebar = document.querySelector('.sidebar');
