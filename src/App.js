@@ -11,7 +11,7 @@ import HeadSearch from './Components/HeadSearch/HeadSearch';
 function App() {
 
   const sidebar = useRef(null)
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(true)
 
   return (
     <div className="App">
