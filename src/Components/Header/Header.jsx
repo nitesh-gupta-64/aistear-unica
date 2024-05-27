@@ -53,7 +53,7 @@ const Header = ( { sidebar, isOpen, setIsOpen } ) => {
 
   return (
     <div className='header'>
-      <Link to='/'><h1>Aistear Unica Admin </h1></Link>
+      <a href='/'><h1>Aistear Unica Admin </h1></a>
       <button className='logout'>
         <div></div>
         <p>Log Out</p>
