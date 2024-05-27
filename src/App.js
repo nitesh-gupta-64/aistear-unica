@@ -4,7 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import Dashboard from "./Screens/Dashboard/Dashboard";
 import Sidebar from "./Components/Sidebar/Sidebar";
 import { useRef, useState } from "react";
-import CreateBlog from "./Components/CreateBlog/CreateBlog";
+import CreateBlog from "./Screens/CreateBlog/CreateBlog";
 import SearchBar from "./Components/SearchBar/SearchBar";
 import HeadTitle from "./Components/HeadTitle/HeadTitle";
 
@@ -25,8 +25,8 @@ function App() {
         <div>
           <Sidebar sidebar={sidebar} />
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/createblog" element={<CreateBlog />} />
+            <Route path="/" element={<Dashboard setHeadTitle = {setHeadTitle} />} />
+            <Route path="/createblog" element={<CreateBlog setHeadTitle = {setHeadTitle} />} />
           </Routes>
         </div>
       </div>

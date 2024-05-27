@@ -1,9 +1,10 @@
 import React from 'react'
+import './HeadTitle.css'
 
 const HeadTitle = ({headTitle}) => {
   return (
     <div>
-        <h2 style={{margin: '2rem 0rem 0.5rem 5rem', fontSize: '2rem', fontWeight:'400'}}>{headTitle}</h2>
+        <h2 className='headTitle'>{headTitle}</h2>
     </div>
   )
 }

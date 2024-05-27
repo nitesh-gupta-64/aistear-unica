@@ -33,7 +33,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { db, storage } from "../../firebase/firebase";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
-const CreateBlog = () => {
+const CreateBlog = ({setHeadTitle}) => {
+  setHeadTitle('Create Blog')
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [summary, setSummary] = useState("");

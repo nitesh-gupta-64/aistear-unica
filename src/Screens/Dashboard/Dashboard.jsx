@@ -1,7 +1,10 @@
 import React from 'react'
 import './Dashboard.css'
 
-const Dashboard = () => {
+const Dashboard = ({setHeadTitle}) => {
+
+  setHeadTitle('Dashboard');
+
   return (
     <div className='dashboard'>
       <h1>Dashboard</h1>
