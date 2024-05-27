@@ -95,7 +95,7 @@ const CreateBlog = () => {
 
     const fetchArchive = async () => {
       try {
-        const archiveRef = collection(db, "archives");
+        const archiveRef = collection(db, "archive");
         const querySnapshot = await getDocs(archiveRef);
         const archiveData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
@@ -109,6 +109,11 @@ const CreateBlog = () => {
     fetchData();
     fetchArchive();
   }, []);
+
+  useEffect(() => {
+    console.log(archive)
+  }, [archive])
+  
 
   useEffect(() => {
     console.log("useEffectSLUG");
@@ -169,7 +174,7 @@ const CreateBlog = () => {
   };
 
   const handleArchiveImageUpload = async (file) => {
-    const storageRef = ref(storage, `/adminPanel/archiveImages/${file.name}`);
+    const storageRef = ref(storage, `/adminPanel/archive/images/${file.name}`);
     await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(storageRef);
     return downloadURL;
@@ -183,7 +188,7 @@ const CreateBlog = () => {
   const handleSaveImageToArchive = async (file) => {
     try {
       const imageURL = await handleArchiveImageUpload(file);
-      const archiveRef = collection(db, "archives");
+      const archiveRef = collection(db, "archive");
       await addDoc(archiveRef, {
         ImageUrl: imageURL,
       });
@@ -207,6 +212,7 @@ const CreateBlog = () => {
   };
 
   const handleOpenDialog = (type) => {
+    setArchiveOrUpload("upload")
     setType(type);
     setOpenDialog(true);
   };
@@ -310,7 +316,7 @@ const CreateBlog = () => {
 
   const handleImageUploadToArchive = async (file) => {
     const storage = getStorage();
-    const storageRef = ref(storage, `archive/${file.name}`);
+    const storageRef = ref(storage, `adminPanel/archive/images/${file.name}`);
     await uploadBytes(storageRef, file);
     const downloadURL = await getDownloadURL(storageRef);
     return downloadURL;
@@ -337,14 +343,14 @@ const CreateBlog = () => {
         const archiveURL = await handleImageUploadToArchive(image);
         const archiveRef = collection(db, "archive");
         await addDoc(archiveRef, {
-          Image: archiveURL,
+          ImageUrl: archiveURL,
         });
       }
       if (seoImage) {
         const archiveURL = await handleImageUploadToArchive(seoImage);
         const archiveRef = collection(db, "archive");
         await addDoc(archiveRef, {
-          Image: archiveURL,
+          ImageUrl: archiveURL,
         });
       }
 
