@@ -90,5 +90,11 @@
     .cross > div:nth-child(3) {
         transform: rotate(-135deg) translateY(8px)
     }
+
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
     
 }
