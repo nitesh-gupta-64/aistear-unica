@@ -1,26 +1,21 @@
-.showBlogs {
+.showCategories {
   padding: 1rem;
   margin-top: 3rem;
 }
 
-.showBlogs button {
+.showCategories button {
   color: black;
   font-size: 0.8rem;
   border: 1px solid black;
 }
 
-.showBlogs button:disabled {
-  color: rgba(0, 0, 0, 0.500);
-  border: 1px solid rgba(0, 0, 0, 0.500);
+.showCategories button:disabled {
+  color: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
-.showBlogs button:hover {
-  border-color: #F496AC;
-  background-color: #F496AC1F;
-}
-
-.showBlogs > table th,
-.showBlogs > table td {
+.showCategories > table th,
+.showCategories > table td {
   border: 1px solid black;
   padding: 1rem;
 }
@@ -80,7 +75,7 @@
     width: 90%;
     position: static;
   }
-  .showBlogs {
+  .showCategories {
     margin-top: 0;
   }
   .pagination {
@@ -96,7 +91,7 @@
   }
 
   .data-table th {
-    background-color: #F496AC;
+    background-color: #f496ac;
     color: white;
     text-align: right;
     padding-right: 20px;

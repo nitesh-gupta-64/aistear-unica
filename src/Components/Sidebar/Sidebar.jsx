@@ -66,15 +66,15 @@ const Sidebar = ({sidebar, removeSidebar}) => {
         </div>
         <div>
           <img src={tag}/>
-          <Link>Tags</Link>
+          <Link to='/tags'>Tags</Link>
         </div>
         <div>
           <img src={tag}/>
-          <Link>Category</Link>
+          <Link to='/categories'>Category</Link>
         </div>
         <div>
           <img src={author}/>
-          <Link>Author</Link>
+          <Link to='/authors'>Author</Link>
         </div>
       </div>
       <button>

@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
-const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
+const ShowBlogs = ({ setHeadTitle, query, setQuery, mode, setMode }) => {
   setHeadTitle("Show Blogs");
 
   const navigate = useNavigate();
@@ -52,17 +52,12 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
   };
 
   const handleSelectRow = (id) => {
-    console.log(id);
     setSelectedBlogs((prevSelected) =>
       prevSelected.includes(id)
         ? prevSelected.filter((rowId) => rowId !== id)
         : [...prevSelected, id]
     );
   };
-
-  useEffect(() => {
-    console.log(selectedBlogs);
-  }, [selectedBlogs]);
 
   const handleDeleteSelected = () => {
     selectedBlogs.forEach(async (id) => {
@@ -85,8 +80,14 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
   };
 
   const addBlog = () => {
-    navigate('/createblog')
-  }
+    navigate("/createblog");
+  };
+
+  const handleEditBlog = () => {
+    const blog = blogs.filter((blog) => selectedBlogs.includes(blog.id))
+    setMode('edit')
+    navigate("/createblog", { state: { blog: blog[0], id: selectedBlogs[0] } });
+  };
 
   const filteredBlogs = blogs.filter((blog) =>
     blog.title.toLowerCase().includes(query.toLowerCase())
@@ -96,10 +97,7 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
     <div className="showBlogs">
       <SearchBar onChange={handleSearch} query={query} setQuery={setQuery} />
       <div className="buttonLayout">
-      <Button
-          variant="outlined"
-          onClick={addBlog}
-        >
+        <Button variant="outlined" onClick={addBlog}>
           Add Blog
         </Button>
         <Button
@@ -109,6 +107,14 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
           disabled={selectedBlogs.length !== 1}
         >
           View
+        </Button>
+        <Button
+          variant="outlined"
+          className="view-button"
+          onClick={handleEditBlog}
+          disabled={selectedBlogs.length !== 1}
+        >
+          Edit
         </Button>
         <Button
           variant="outlined"
@@ -147,11 +153,9 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
                 <td>{blog.title}</td>
                 <td>{blog.slug}</td>
                 <td>{blog.description}</td>
-                {
-                  new Date(blog.createdAt.toDate()).toLocaleString() && (
-                    <td>{new Date(blog.createdAt.toDate()).toLocaleString()}</td>
-                  )
-                }
+                {new Date(blog.createdAt.toDate()).toLocaleString() && (
+                  <td>{new Date(blog.createdAt.toDate()).toLocaleString()}</td>
+                )}
                 <td>
                   {blog.tags.map((tag) => (
                     <p>{tag}</p>

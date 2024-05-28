@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import addIcon from "../../assets/images/addIcon.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   addDoc,
   collection,
@@ -31,18 +31,30 @@ import {
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { db, storage } from "../../firebase/firebase";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  deleteObject,
+} from "firebase/storage";
 
-const CreateBlog = ({setHeadTitle}) => {
-  setHeadTitle('Create Blog')
+const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
+  if (mode === "edit") {
+    setHeadTitle("Edit Blog");
+  } else {
+    setHeadTitle("Create Blog");
+  }
+  const navigate = useNavigate();
+  const location = useLocation();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [summary, setSummary] = useState("");
-  // const { blogData } = window.location.state || {};
+  const { blog } = location.state || {};
+  const { id } = location.state || "";
   const [description, setDescription] = useState("");
   const [editorDescription, setEditorDescription] = useState("");
   const [isFeatured, setIsFeatured] = useState("");
-  const [ifImage, setIfImage] = useState(null);
   const [category, setCategory] = useState("");
   const [categories, setCategories] = useState([]);
   const [tags, setTags] = useState([]);
@@ -73,9 +85,7 @@ const CreateBlog = ({setHeadTitle}) => {
   const [authorDescription, setAuthorDescription] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [blogs, setBlogs] = useState([]);
   const [type, setType] = useState("");
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -110,7 +120,42 @@ const CreateBlog = ({setHeadTitle}) => {
     fetchData();
     fetchArchive();
   }, []);
-  
+
+  useEffect(() => {
+    console.log("Prefilling data useEffect");
+    if (mode === "edit") {
+      setTitle(blog.title);
+      setSlug(blog.slug);
+      setDescription(blog.description);
+      setSummary(blog.summary);
+      setEditorDescription(blog.editorDescription);
+      setCategory(blog.category);
+      setIsFeatured(blog.isFeatured);
+      setImagePreview(blog.image);
+      setSelectedTags(blog.tags);
+      setSeoTitle(blog.seo.title);
+      setSeoDescription(blog.seo.description);
+      setSeoImagePreview(blog.seo.image);
+      setAuthor(blog.seo.seoauthor);
+      setSeoKeywords(blog.seo.keywords);
+      // setImage(ConvertToBlob(blog.image));
+      // setSeoImage(ConvertToBlob(blog.seo.image));
+    }
+  }, []);
+
+  // const ConvertToBlob = async (imageUrl) => {
+
+  //   try {
+  //     const response = await fetch(imageUrl);
+  //     const blob = await response.blob();
+  //     return blob
+  //   }
+  //   catch(error) {
+  //     console.log("Error Fetching ImageURL ", error)
+  //     toast.error("Error Fetching ImageURL ", error)
+  //   }
+
+  // }
 
   useEffect(() => {
     console.log("useEffectSLUG");
@@ -209,7 +254,7 @@ const CreateBlog = ({setHeadTitle}) => {
   };
 
   const handleOpenDialog = (type) => {
-    setArchiveOrUpload("upload")
+    setArchiveOrUpload("upload");
     setType(type);
     setOpenDialog(true);
   };
@@ -351,34 +396,65 @@ const CreateBlog = ({setHeadTitle}) => {
         });
       }
 
-      const blogsRef = collection(db, "blogs");
-      await addDoc(blogsRef, {
-        title,
-        slug,
-        description,
-        editorDescription,
-        isFeatured,
-        summary,
-        category,
-        image: imageURL,
-        tags: selectedTags,
-        seo: {
-          title: seoTitle,
-          description: seoDescription,
-          keywords: seoKeywords,
-          image: seoImageURL,
-          seoauthor: author,
-        },
-        createdAt: serverTimestamp(),
-      });
-      setLoading(false);
-      toast.success("Blog added successfully!");
+      if (mode === "edit") {
+        try {
+          const blogRef = doc(db, "blogs", id);
+          await updateDoc(blogRef, {
+            title,
+            slug,
+            description,
+            editorDescription,
+            isFeatured,
+            summary,
+            category,
+            image: imageURL,
+            tags: selectedTags,
+            seo: {
+              title: seoTitle,
+              description: seoDescription,
+              keywords: seoKeywords,
+              image: seoImageURL,
+              seoauthor: author,
+            },
+            createdAt: serverTimestamp(),
+          });
+          setLoading(false);
+          toast.success("Blog Updated successfully!");
+        } catch (error) {
+          toast.error(`Error Updating Blog : ${error}`);
+          console.log(error);
+        }
+        setMode("create");
+      } else {
+        const blogRef = collection(db, "blogs");
+        await addDoc(blogRef, {
+          title,
+          slug,
+          description,
+          editorDescription,
+          isFeatured,
+          summary,
+          category,
+          image: imageURL,
+          tags: selectedTags,
+          seo: {
+            title: seoTitle,
+            description: seoDescription,
+            keywords: seoKeywords,
+            image: seoImageURL,
+            seoauthor: author,
+          },
+          createdAt: serverTimestamp(),
+        });
+        setLoading(false);
+        toast.success("Blog added successfully!");
+      }
 
       setTitle("");
       setSlug("");
       setDescription("");
-      setEditorDescription("")
-      setIsFeatured("")
+      setEditorDescription("");
+      setIsFeatured("");
       setSummary("");
       setCategory("");
       setImage(null);
@@ -456,7 +532,7 @@ const CreateBlog = ({setHeadTitle}) => {
         <div className="editor">
           <Editor
             apiKey="z7gazwufigwwq500owylijq0vfodueg4e17noaid9895p4fi"
-            initialValue=""
+            initialValue={mode === "edit" ? editorDescription : ""}
             init={{
               height: 500,
               menubar: true,
@@ -540,9 +616,21 @@ const CreateBlog = ({setHeadTitle}) => {
           <label>Seo Data</label>
           <div className="seoTable">
             <label>SEO Title</label>
-            <input type="text" value={seoTitle} onChange={(e) => {setSeoTitle(e.target.value)}} />
+            <input
+              type="text"
+              value={seoTitle}
+              onChange={(e) => {
+                setSeoTitle(e.target.value);
+              }}
+            />
             <label>SEO Description</label>
-            <input type="text" value={seoDescription} onChange={(e) => {setSeoDescription(e.target.value)}} />
+            <input
+              type="text"
+              value={seoDescription}
+              onChange={(e) => {
+                setSeoDescription(e.target.value);
+              }}
+            />
             <div>
               <label>SEO Author</label>
               <Button onClick={() => setAuthorDialogOpen(true)}>
@@ -607,7 +695,9 @@ const CreateBlog = ({setHeadTitle}) => {
             </Box>
           </div>
         </div>
-        <button onClick={handleSubmit}>Create Blog</button>
+        <button onClick={handleSubmit}>
+          {mode === "edit" ? "Update Blog" : "Create Blog"}
+        </button>
       </form>
 
       <Dialog
