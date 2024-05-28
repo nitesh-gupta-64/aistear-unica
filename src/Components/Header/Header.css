@@ -91,11 +91,5 @@
         transform: rotate(-135deg) translateY(8px)
     }
 
-    .header {
-        position: fixed;
-        top: 0;
-        z-index: 10;
-    }
-    
     
 }
