@@ -147,7 +147,11 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
                 <td>{blog.title}</td>
                 <td>{blog.slug}</td>
                 <td>{blog.description}</td>
-                <td></td>
+                {
+                  new Date(blog.createdAt.toDate()).toLocaleString() && (
+                    <td>{new Date(blog.createdAt.toDate()).toLocaleString()}</td>
+                  )
+                }
                 <td>
                   {blog.tags.map((tag) => (
                     <p>{tag}</p>
