@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import './Header.css'
-import { Link, useLocation } from 'react-router-dom'
 
-const Header = ( { sidebar, isOpen, setIsOpen } ) => {
+const Header = ( { sidebar, isOpen, setIsOpen, removeSidebar } ) => {
 
   const toggle = useRef(null)
 
@@ -20,8 +19,12 @@ const Header = ( { sidebar, isOpen, setIsOpen } ) => {
       sidebar.current.classList.remove('side');
       sidebar.current.classList.add('sideblur')
     }
-    setIsOpen(!isOpen)
   }
+
+  useEffect(() => {
+    toggleHandler();
+  }, [isOpen])
+  
 
 
   // const toggleHandler = () => {
@@ -53,7 +56,7 @@ const Header = ( { sidebar, isOpen, setIsOpen } ) => {
         <div></div>
         <p>Log Out</p>
       </button>
-      <button onClick={toggleHandler} className='toggle' ref={toggle}>
+      <button onClick={removeSidebar} className='toggle' ref={toggle}>
         <div></div>
         <div></div>
         <div></div>

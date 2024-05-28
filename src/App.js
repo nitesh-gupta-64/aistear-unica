@@ -12,19 +12,23 @@ import BlogDetails from "./Screens/BlogDetails/BlogDetails";
 
 function App() {
   const sidebar = useRef(null);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [query, setQuery] = useState("");
   const [headTitle, setHeadTitle] = useState("Dashboard");
 
+  const removeSidebar = () => {
+    setIsOpen(!isOpen);
+  }
+
   return (
     <div className="App">
-      <Header sidebar={sidebar} isOpen={isOpen} setIsOpen={setIsOpen} />
+      <Header sidebar={sidebar} isOpen={isOpen} setIsOpen={setIsOpen} removeSidebar={removeSidebar} />
       <div className="hero">
         <div>
           <HeadTitle headTitle={headTitle} />
         </div>
         <div>
-          <Sidebar sidebar={sidebar} />
+          <Sidebar sidebar={sidebar} removeSidebar={removeSidebar} />
           <Routes>
             <Route path="/" element={<Dashboard setHeadTitle = {setHeadTitle} />} />
             <Route path="/createblog" element={<CreateBlog setHeadTitle = {setHeadTitle} />} />

@@ -13,10 +13,10 @@ import tag from '../../assets/images/tag.png'
 import vendor from '../../assets/images/vendor.png'
 import wallet from '../../assets/images/wallet.png'
 
-const Sidebar = ({sidebar}) => {
+const Sidebar = ({sidebar, removeSidebar}) => {
 
   return (
-    <div ref={sidebar} className='sidebar side'>
+    <div onClick={removeSidebar} ref={sidebar} className='sidebar side'>
       <div>
         <h2>Admin Layout</h2>
         <div>
