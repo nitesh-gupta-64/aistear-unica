@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
   setHeadTitle("Show Blogs");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -52,7 +52,7 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
   };
 
   const handleSelectRow = (id) => {
-    console.log(id)
+    console.log(id);
     setSelectedBlogs((prevSelected) =>
       prevSelected.includes(id)
         ? prevSelected.filter((rowId) => rowId !== id)
@@ -61,9 +61,8 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
   };
 
   useEffect(() => {
-    console.log(selectedBlogs)
-  }, [selectedBlogs])
-  
+    console.log(selectedBlogs);
+  }, [selectedBlogs]);
 
   const handleDeleteSelected = () => {
     selectedBlogs.forEach(async (id) => {
@@ -82,7 +81,11 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
   };
 
   const handleViewBlog = () => {
-    navigate(`/blog/${selectedBlogs[0]}`)
+    navigate(`/blog/${selectedBlogs[0]}`);
+  };
+
+  const addBlog = () => {
+    navigate('/createblog')
   }
 
   const filteredBlogs = blogs.filter((blog) =>
@@ -92,6 +95,30 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
   return (
     <div className="showBlogs">
       <SearchBar onChange={handleSearch} query={query} setQuery={setQuery} />
+      <div className="buttonLayout">
+      <Button
+          variant="outlined"
+          onClick={addBlog}
+        >
+          Add Blog
+        </Button>
+        <Button
+          variant="outlined"
+          className="view-button"
+          onClick={handleViewBlog}
+          disabled={selectedBlogs.length !== 1}
+        >
+          View
+        </Button>
+        <Button
+          variant="outlined"
+          className="delete-button"
+          onClick={handleDeleteSelected}
+          disabled={selectedBlogs.length === 0}
+        >
+          Delete
+        </Button>
+      </div>
       <table className="data-table">
         <thead>
           <tr>
@@ -152,23 +179,6 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery }) => {
             </option>
           ))}
         </select>
-        <Button
-          variant="contained"
-          color="error"
-          className="delete-button"
-          onClick={handleDeleteSelected}
-          disabled={selectedBlogs.length === 0}
-        >
-          Delete Selected
-        </Button>
-        <Button
-          variant="contained"
-          className="view-button"
-          onClick={handleViewBlog}
-          disabled={selectedBlogs.length !== 1}
-        >
-          View Selected
-        </Button>
       </div>
     </div>
   );

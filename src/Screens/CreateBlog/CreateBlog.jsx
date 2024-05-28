@@ -540,9 +540,9 @@ const CreateBlog = ({setHeadTitle}) => {
           <label>Seo Data</label>
           <div className="seoTable">
             <label>SEO Title</label>
-            <input type="text" onChange={(e) => {setSeoTitle(e.target.value)}} />
+            <input type="text" value={seoTitle} onChange={(e) => {setSeoTitle(e.target.value)}} />
             <label>SEO Description</label>
-            <input type="text" onChange={(e) => {setSeoDescription(e.target.value)}} />
+            <input type="text" value={seoDescription} onChange={(e) => {setSeoDescription(e.target.value)}} />
             <div>
               <label>SEO Author</label>
               <Button onClick={() => setAuthorDialogOpen(true)}>
