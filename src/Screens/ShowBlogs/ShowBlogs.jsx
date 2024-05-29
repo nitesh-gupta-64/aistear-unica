@@ -8,13 +8,13 @@ import { toast } from "react-toastify";
 import "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
-const ShowBlogs = ({ setHeadTitle, query, setQuery, mode, setMode }) => {
-  setHeadTitle("Show Blogs");
+const ShowBlogs = ({ setHeadTitle, headTitle, query, setQuery, mode, setMode }) => {
+  setHeadTitle("Blogs");
 
   const navigate = useNavigate();
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedBlogs, setSelectedBlogs] = useState([]);
   const [blogs, setBlogs] = useState([]);
 
@@ -84,8 +84,8 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery, mode, setMode }) => {
   };
 
   const handleEditBlog = () => {
-    const blog = blogs.filter((blog) => selectedBlogs.includes(blog.id))
-    setMode('edit')
+    const blog = blogs.filter((blog) => selectedBlogs.includes(blog.id));
+    setMode("edit");
     navigate("/createblog", { state: { blog: blog[0], id: selectedBlogs[0] } });
   };
 
@@ -94,99 +94,106 @@ const ShowBlogs = ({ setHeadTitle, query, setQuery, mode, setMode }) => {
   );
 
   return (
-    <div className="showBlogs">
-      <SearchBar onChange={handleSearch} query={query} setQuery={setQuery} />
-      <div className="buttonLayout">
-        <Button variant="outlined" onClick={addBlog}>
-          Add Blog
-        </Button>
-        <Button
-          variant="outlined"
-          className="view-button"
-          onClick={handleViewBlog}
-          disabled={selectedBlogs.length !== 1}
-        >
-          View
-        </Button>
-        <Button
-          variant="outlined"
-          className="view-button"
-          onClick={handleEditBlog}
-          disabled={selectedBlogs.length !== 1}
-        >
-          Edit
-        </Button>
-        <Button
-          variant="outlined"
-          className="delete-button"
-          onClick={handleDeleteSelected}
-          disabled={selectedBlogs.length === 0}
-        >
-          Delete
-        </Button>
+    <div className="showBlogsPage">
+      <div className="showBlogsHeader">
+        <h1>{headTitle}</h1>
+        <SearchBar onChange={handleSearch} query={query} setQuery={setQuery} />
+        <div className="buttonLayout">
+          <Button variant="outlined" onClick={addBlog}>
+            Add Blog
+          </Button>
+          <Button
+            variant="outlined"
+            className="view-button"
+            onClick={handleViewBlog}
+            disabled={selectedBlogs.length !== 1}
+          >
+            View
+          </Button>
+          <Button
+            variant="outlined"
+            className="edit-button"
+            onClick={handleEditBlog}
+            disabled={selectedBlogs.length !== 1}
+          >
+            Edit
+          </Button>
+          <Button
+            variant="outlined"
+            className="delete-button"
+            onClick={handleDeleteSelected}
+            disabled={selectedBlogs.length === 0}
+          >
+            Delete
+          </Button>
+        </div>
       </div>
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>#</th>
-            <th>Name</th>
-            <th>Slug</th>
-            <th>Description</th>
-            <th>Created at</th>
-            <th>View Tags</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredBlogs
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((blog, index) => (
-              <tr key={blog.id}>
-                <td data-label="Select">
-                  <input
-                    type="checkbox"
-                    checked={selectedBlogs.includes(blog.id)}
-                    onChange={() => handleSelectRow(blog.id)}
-                  />
-                </td>
-                <td>{index + 1}</td>
-                <td>{blog.title}</td>
-                <td>{blog.slug}</td>
-                <td>{blog.description}</td>
-                {new Date(blog.createdAt.toDate()).toLocaleString() && (
-                  <td>{new Date(blog.createdAt.toDate()).toLocaleString()}</td>
-                )}
-                <td>
-                  {blog.tags.map((tag) => (
-                    <p>{tag}</p>
-                  ))}
-                </td>
-              </tr>
+      <div className="showBlogs">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>#</th>
+              <th>Name</th>
+              <th>Slug</th>
+              <th>Description</th>
+              <th>Created at</th>
+              <th>View Tags</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredBlogs
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((blog, index) => (
+                <tr key={blog.id}>
+                  <td data-label="Select">
+                    <input
+                      type="checkbox"
+                      checked={selectedBlogs.includes(blog.id)}
+                      onChange={() => handleSelectRow(blog.id)}
+                    />
+                  </td>
+                  <td>{index + 1}</td>
+                  <td>{blog.title}</td>
+                  <td>{blog.slug}</td>
+                  <td>{blog.description}</td>
+                  {new Date(blog.createdAt.toDate()).toLocaleString() && (
+                    <td>
+                      {new Date(blog.createdAt.toDate()).toLocaleString()}
+                    </td>
+                  )}
+                  <td>
+                    {blog.tags.map((tag) => (
+                      <p>{tag}</p>
+                    ))}
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+        <div className="pagination">
+          <Button
+            onClick={() => handleChangePage(page - 1)}
+            disabled={page === 0}
+            variant="outlined"
+          >
+            Previous
+          </Button>
+          <Button
+            onClick={() => handleChangePage(page + 1)}
+            disabled={page >= Math.ceil(filteredBlogs.length / rowsPerPage) - 1}
+            variant="outlined"
+          >
+            Next
+          </Button>
+          <select value={rowsPerPage} onChange={handleChangeRowsPerPage}>
+            {[10, 25, 50, 100].map((size) => (
+              <option key={size} value={size}>
+                {size}
+              </option>
             ))}
-        </tbody>
-      </table>
-      <div className="pagination">
-        <Button
-          onClick={() => handleChangePage(page - 1)}
-          disabled={page === 0}
-          variant="outlined"
-        >
-          Previous
-        </Button>
-        <Button
-          onClick={() => handleChangePage(page + 1)}
-          disabled={page >= Math.ceil(filteredBlogs.length / rowsPerPage) - 1}
-          variant="outlined"
-        >
-          Next
-        </Button>
-        <select value={rowsPerPage} onChange={handleChangeRowsPerPage}>
-          {[5, 10, 25, 100].map((size) => (
-            <option key={size} value={size}>
-              {size}
-            </option>
-          ))}
-        </select>
+          </select>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./CreateBlog.css";
 import { Editor } from "@tinymce/tinymce-react";
+import { ClipLoader } from "react-spinners";
 import {
   Container,
   Typography,
@@ -85,6 +86,7 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
   const [authorDescription, setAuthorDescription] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [blogs, setBlogs] = useState([]);
   const [type, setType] = useState("");
 
   useEffect(() => {
@@ -138,24 +140,8 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
       setSeoImagePreview(blog.seo.image);
       setAuthor(blog.seo.seoauthor);
       setSeoKeywords(blog.seo.keywords);
-      // setImage(ConvertToBlob(blog.image));
-      // setSeoImage(ConvertToBlob(blog.seo.image));
     }
   }, []);
-
-  // const ConvertToBlob = async (imageUrl) => {
-
-  //   try {
-  //     const response = await fetch(imageUrl);
-  //     const blob = await response.blob();
-  //     return blob
-  //   }
-  //   catch(error) {
-  //     console.log("Error Fetching ImageURL ", error)
-  //     toast.error("Error Fetching ImageURL ", error)
-  //   }
-
-  // }
 
   useEffect(() => {
     console.log("useEffectSLUG");
@@ -475,166 +461,99 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
   };
 
   return (
-    <div className="createBlog">
-      <form className="createBlogForm">
-        <div>
+    <div className="createBlogPage">
+      <div className="createBlogHeader">
+        <h1>Create Blog</h1>
+      </div>
+      <div className="createBlog">
+        <form className="createBlogForm">
           <div>
-            <label>Title</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <label>Description</label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              style={{ height: "9rem" }}
-            />
-          </div>
-          <div>
-            <label>Slug</label>
-            <input
-              type="text"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-            />
-            <label>Summary</label>
-            <input
-              type="text"
-              value={summary}
-              onChange={(e) => setSummary(e.target.value)}
-              style={{ height: "9rem" }}
-            />
-          </div>
-        </div>
-        <div>
-          <label>Is featured</label>
-          <input
-            type="text"
-            value={isFeatured}
-            onChange={(e) => setIsFeatured(e.target.value)}
-          />
-          <label>Featured Image</label>
-          <Button color="success" onClick={() => handleOpenDialog("image")}>
-            Upload Image
-          </Button>
-          {image && <Typography variant="body2">{image.name}</Typography>}
-          {imagePreview && (
-            <img
-              src={imagePreview}
-              alt="Blog"
-              style={{ width: 200, height: 200, objectFit: "contain" }}
-            />
-          )}
-        </div>
-        <div className="editor">
-          <Editor
-            apiKey="z7gazwufigwwq500owylijq0vfodueg4e17noaid9895p4fi"
-            initialValue={mode === "edit" ? editorDescription : ""}
-            init={{
-              height: 500,
-              menubar: true,
-              plugins: [
-                "advlist autolink lists link image charmap print preview anchor",
-                "searchreplace visualblocks code fullscreen",
-                "insertdatetime media table paste code help wordcount",
-              ],
-              toolbar:
-                "undo redo | formatselect | " +
-                "bold italic underline strikethrough | " +
-                "alignleft aligncenter alignright alignjustify | " +
-                "outdent indent | " +
-                "file edit view insert | " +
-                "fontsizeselect | fontselect | " +
-                "cut copy paste | " +
-                "table | " +
-                "forecolor backcolor | " +
-                "link unlink | " +
-                "image media | " +
-                "fullscreen | help",
-            }}
-            onEditorChange={handleEditorChange}
-          />
-        </div>
-
-        <div>
-          <div>
-            <label>Category</label>
-            <Button onClick={() => setCategoryDialogOpen(true)}>
-              Add Category
-            </Button>
-          </div>
-          <TextField
-            style={{ width: "95%" }}
-            fullWidth
-            variant="outlined"
-            select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            sx={{ mb: 2 }}
-          >
-            {categories.map((cat) => (
-              <MenuItem key={cat.id} value={cat.name}>
-                {cat.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <div>
-            <label>Tags</label>
-            <Button onClick={() => setTagDialogOpen(true)}>Add Tag</Button>
-          </div>
-          <TextField
-            style={{ width: "95%" }}
-            fullWidth
-            variant="outlined"
-            select
-            value={selectedTags}
-            onChange={(e) => setSelectedTags(e.target.value)}
-            SelectProps={{
-              multiple: true,
-              renderValue: (selected) => (
-                <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-                  {selected.map((value) => (
-                    <Chip key={value} label={value} sx={{ m: 0.5 }} />
-                  ))}
-                </Box>
-              ),
-            }}
-            sx={{ mb: 2 }}
-          >
-            {tags.map((tag) => (
-              <MenuItem key={tag.id} value={tag.name}>
-                {tag.name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </div>
-
-        <div className="seo">
-          <label>Seo Data</label>
-          <div className="seoTable">
-            <label>SEO Title</label>
-            <input
-              type="text"
-              value={seoTitle}
-              onChange={(e) => {
-                setSeoTitle(e.target.value);
-              }}
-            />
-            <label>SEO Description</label>
-            <input
-              type="text"
-              value={seoDescription}
-              onChange={(e) => {
-                setSeoDescription(e.target.value);
-              }}
-            />
             <div>
-              <label>SEO Author</label>
-              <Button onClick={() => setAuthorDialogOpen(true)}>
-                Add Author
+              <label>Title</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              <label>Description</label>
+              <input
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                style={{ height: "9rem" }}
+              />
+            </div>
+            <div>
+              <label>Slug</label>
+              <input
+                type="text"
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+              />
+              <label>Summary</label>
+              <input
+                type="text"
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                style={{ height: "9rem" }}
+              />
+            </div>
+          </div>
+          <div>
+            <label>Is featured</label>
+            <input
+              type="text"
+              value={isFeatured}
+              onChange={(e) => setIsFeatured(e.target.value)}
+            />
+            <label>Featured Image</label>
+            <Button color="success" onClick={() => handleOpenDialog("image")}>
+              Upload Image
+            </Button>
+            {image && <Typography variant="body2">{image.name}</Typography>}
+            {imagePreview && (
+              <img
+                src={imagePreview}
+                alt="Blog"
+                style={{ width: 200, height: 200, objectFit: "contain" }}
+              />
+            )}
+          </div>
+          <div className="editor">
+            <Editor
+              apiKey="z7gazwufigwwq500owylijq0vfodueg4e17noaid9895p4fi"
+              initialValue={mode === "edit" ? editorDescription : ""}
+              init={{
+                height: 500,
+                menubar: true,
+                plugins: [
+                  "advlist autolink lists link image charmap print preview anchor",
+                  "searchreplace visualblocks code fullscreen",
+                  "insertdatetime media table paste code help wordcount",
+                ],
+                toolbar:
+                  "undo redo | formatselect | " +
+                  "bold italic underline strikethrough | " +
+                  "alignleft aligncenter alignright alignjustify | " +
+                  "outdent indent | " +
+                  "file edit view insert | " +
+                  "fontsizeselect | fontselect | " +
+                  "cut copy paste | " +
+                  "table | " +
+                  "forecolor backcolor | " +
+                  "link unlink | " +
+                  "image media | " +
+                  "fullscreen | help",
+              }}
+              onEditorChange={handleEditorChange}
+            />
+          </div>
+
+          <div>
+            <div>
+              <label>Category</label>
+              <Button onClick={() => setCategoryDialogOpen(true)}>
+                Add Category
               </Button>
             </div>
             <TextField
@@ -642,312 +561,393 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
               fullWidth
               variant="outlined"
               select
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               sx={{ mb: 2 }}
             >
-              {authors.map((auth) => (
-                <MenuItem key={auth.id} value={auth.name}>
-                  {auth.name}
+              {categories.map((cat) => (
+                <MenuItem key={cat.id} value={cat.name}>
+                  {cat.name}
                 </MenuItem>
               ))}
             </TextField>
-            <label>SEO Image</label>
-            <Button
-              style={{ width: "100%" }}
-              color="success"
-              onClick={() => handleOpenDialog("seoImage")}
-            >
-              Upload SEO Image
-            </Button>
-            {seoImage && (
-              <Typography variant="body2">{seoImage.name}</Typography>
-            )}
-            {seoImagePreview && (
-              <img
-                src={seoImagePreview}
-                alt="Blog"
-                style={{ width: 200, height: 200, objectFit: "contain" }}
-              />
-            )}
-
-            <label>SEO Keywords</label>
+            <div>
+              <label>Tags</label>
+              <Button onClick={() => setTagDialogOpen(true)}>Add Tag</Button>
+            </div>
             <TextField
               style={{ width: "95%" }}
               fullWidth
               variant="outlined"
-              type="text"
-              label="SEO Keywords"
-              value={keywordInput}
-              onChange={(e) => setKeywordInput(e.target.value)}
-              onKeyPress={handleKeywordInputKeyPress}
+              select
+              value={selectedTags}
+              onChange={(e) => setSelectedTags(e.target.value)}
+              SelectProps={{
+                multiple: true,
+                renderValue: (selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                    {selected.map((value) => (
+                      <Chip key={value} label={value} sx={{ m: 0.5 }} />
+                    ))}
+                  </Box>
+                ),
+              }}
               sx={{ mb: 2 }}
-            />
-            <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-              {seoKeywords.map((keyword, index) => (
-                <Chip
-                  key={index}
-                  label={keyword}
-                  onDelete={() => handleDeleteKeyword(keyword)}
-                  sx={{ m: 0.5 }}
-                />
-              ))}
-            </Box>
-          </div>
-        </div>
-        <button onClick={handleSubmit}>
-          {mode === "edit" ? "Update Blog" : "Create Blog"}
-        </button>
-      </form>
-
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        sx={{
-          height: "80%",
-          width: "80%",
-          overflow: "auto",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          sx={{ p: 2 }}
-        >
-          <Button
-            color="secondary"
-            variant={archiveOrUpload === "upload" ? "contained" : "outlined"}
-            onClick={() => setArchiveOrUpload("upload")}
-          >
-            Upload
-          </Button>
-          <Button
-            color="secondary"
-            variant={archiveOrUpload === "upload" ? "outlined" : "contained"}
-            onClick={() => setArchiveOrUpload("archive")}
-          >
-            Archive
-          </Button>
-        </Box>
-
-        {archiveOrUpload === "upload" ? (
-          <label htmlFor="file-upload">
-            <Box
-              p={1}
-              display="flex"
-              justifyContent={"center"}
-              alignItems={"center"}
-              style={{ cursor: "pointer", width: 200, height: 200 }}
             >
-              <CloudUploadIcon />
-              <Typography
-                ml={1}
-                mt={1}
-                variant="h5"
-                gutterBottom
-                style={{ cursor: "pointer" }}
-              >
-                Upload
-              </Typography>
+              {tags.map((tag) => (
+                <MenuItem key={tag.id} value={tag.name}>
+                  {tag.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </div>
+
+          <div className="seo">
+            <label>Seo Data</label>
+            <div className="seoTable">
+              <label>SEO Title</label>
               <input
-                id="file-upload"
-                hidden
-                accept="image/*"
-                type="file"
+                type="text"
+                value={seoTitle}
                 onChange={(e) => {
-                  if (type === "image") {
-                    setImage(e.target.files[0]);
-                    setImagePreview(URL.createObjectURL(e.target.files[0]));
-                  } else {
-                    setSeoImage(e.target.files[0]);
-                    setSeoImagePreview(URL.createObjectURL(e.target.files[0]));
-                  }
-                  setOpenDialog(false);
+                  setSeoTitle(e.target.value);
                 }}
               />
-            </Box>
-          </label>
-        ) : (
-          <Box
-            p={2}
-            display={"flex"}
-            justifyContent={"center"}
-            alignItems={"center"}
-            flexWrap={"wrap"}
-          >
-            <label htmlFor="file-archive-upload">
-              <Paper sx={{ p: 2, m: 1, cursor: "pointer" }}>
+              <label>SEO Description</label>
+              <input
+                type="text"
+                value={seoDescription}
+                onChange={(e) => {
+                  setSeoDescription(e.target.value);
+                }}
+              />
+              <div>
+                <label>SEO Author</label>
+                <Button onClick={() => setAuthorDialogOpen(true)}>
+                  Add Author
+                </Button>
+              </div>
+              <TextField
+                style={{ width: "95%" }}
+                fullWidth
+                variant="outlined"
+                select
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+                sx={{ mb: 2 }}
+              >
+                {authors.map((auth) => (
+                  <MenuItem key={auth.id} value={auth.name}>
+                    {auth.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <label>SEO Image</label>
+              <Button
+                style={{ width: "100%" }}
+                color="success"
+                onClick={() => handleOpenDialog("seoImage")}
+              >
+                Upload SEO Image
+              </Button>
+              {seoImage && (
+                <Typography variant="body2">{seoImage.name}</Typography>
+              )}
+              {seoImagePreview && (
                 <img
-                  src={addIcon}
-                  alt="Archive"
-                  style={{
-                    width: 200,
-                    height: 200,
-                    objectFit: "contain",
-                  }}
+                  src={seoImagePreview}
+                  alt="Blog"
+                  style={{ width: 200, height: 200, objectFit: "contain" }}
                 />
+              )}
+
+              <label>SEO Keywords</label>
+              <TextField
+                style={{ width: "95%" }}
+                fullWidth
+                variant="outlined"
+                type="text"
+                label="SEO Keywords"
+                value={keywordInput}
+                onChange={(e) => setKeywordInput(e.target.value)}
+                onKeyPress={handleKeywordInputKeyPress}
+                sx={{ mb: 2 }}
+              />
+              <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                {seoKeywords.map((keyword, index) => (
+                  <Chip
+                    key={index}
+                    label={keyword}
+                    onDelete={() => handleDeleteKeyword(keyword)}
+                    sx={{ m: 0.5 }}
+                  />
+                ))}
+              </Box>
+            </div>
+          </div>
+          <button onClick={handleSubmit} disabled={loading}>
+            {loading ? (
+              <ClipLoader size={20} color="white" />
+            ) : (
+              `${mode === "edit" ? "Update Blog" : "Create Blog"}`
+            )}
+          </button>
+        </form>
+
+        <Dialog
+          open={openDialog}
+          onClose={handleCloseDialog}
+          sx={{
+            height: "80%",
+            width: "80%",
+            overflow: "auto",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ p: 2 }}
+          >
+            <Button
+              color="secondary"
+              variant={archiveOrUpload === "upload" ? "contained" : "outlined"}
+              onClick={() => setArchiveOrUpload("upload")}
+            >
+              Upload
+            </Button>
+            <Button
+              color="secondary"
+              variant={archiveOrUpload === "upload" ? "outlined" : "contained"}
+              onClick={() => setArchiveOrUpload("archive")}
+            >
+              Archive
+            </Button>
+          </Box>
+
+          {archiveOrUpload === "upload" ? (
+            <label htmlFor="file-upload">
+              <Box
+                p={1}
+                display="flex"
+                justifyContent={"center"}
+                alignItems={"center"}
+                style={{ cursor: "pointer", width: 200, height: 200 }}
+              >
+                <CloudUploadIcon />
+                <Typography
+                  ml={1}
+                  mt={1}
+                  variant="h5"
+                  gutterBottom
+                  style={{ cursor: "pointer" }}
+                >
+                  Upload
+                </Typography>
                 <input
-                  id="file-archive-upload"
+                  id="file-upload"
                   hidden
                   accept="image/*"
                   type="file"
-                  onChange={handleImageArchiveChange}
-                />
-              </Paper>
-            </label>
-            {archive.map((item, index) => (
-              <Paper
-                key={index}
-                sx={{ p: 2, m: 1, cursor: "pointer" }}
-                onClick={() => {
-                  handleSetArchiveImage(item.ImageUrl);
-                }}
-              >
-                <img
-                  src={item.ImageUrl}
-                  alt="Archive"
-                  style={{
-                    width: 200,
-                    height: 200,
-                    objectFit: "contain",
+                  onChange={(e) => {
+                    if (type === "image") {
+                      setImage(e.target.files[0]);
+                      setImagePreview(URL.createObjectURL(e.target.files[0]));
+                    } else {
+                      setSeoImage(e.target.files[0]);
+                      setSeoImagePreview(
+                        URL.createObjectURL(e.target.files[0])
+                      );
+                    }
+                    setOpenDialog(false);
                   }}
                 />
-              </Paper>
-            ))}
-          </Box>
-        )}
-      </Dialog>
+              </Box>
+            </label>
+          ) : (
+            <Box
+              p={2}
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+              flexWrap={"wrap"}
+            >
+              <label htmlFor="file-archive-upload">
+                <Paper sx={{ p: 2, m: 1, cursor: "pointer" }}>
+                  <img
+                    src={addIcon}
+                    alt="Archive"
+                    style={{
+                      width: 200,
+                      height: 200,
+                      objectFit: "contain",
+                    }}
+                  />
+                  <input
+                    id="file-archive-upload"
+                    hidden
+                    accept="image/*"
+                    type="file"
+                    onChange={handleImageArchiveChange}
+                  />
+                </Paper>
+              </label>
+              {archive.map((item, index) => (
+                <Paper
+                  key={index}
+                  sx={{ p: 2, m: 1, cursor: "pointer" }}
+                  onClick={() => {
+                    handleSetArchiveImage(item.ImageUrl);
+                  }}
+                >
+                  <img
+                    src={item.ImageUrl}
+                    alt="Archive"
+                    style={{
+                      width: 200,
+                      height: 200,
+                      objectFit: "contain",
+                    }}
+                  />
+                </Paper>
+              ))}
+            </Box>
+          )}
+        </Dialog>
 
-      <Dialog open={tagDialogOpen} onClose={() => setTagDialogOpen(false)}>
-        <DialogTitle>Add New Tag</DialogTitle>
-        <DialogContent>
-          <TextField
-            fullWidth
-            variant="filled"
-            label="New Tag"
-            value={newTag}
-            onChange={(e) => setNewTag(e.target.value)}
-            sx={{ mt: 2 }}
-          />
-          <TextField
-            fullWidth
-            variant="filled"
-            type="text"
-            label="Slug"
-            value={tagSlug}
-            onChange={(e) => setTagSlug(e.target.value)}
-            sx={{ mt: 2 }}
-          />
-          <TextField
-            fullWidth
-            variant="filled"
-            type="text"
-            label="Description"
-            value={tagDescription}
-            onChange={(e) => setTagDescription(e.target.value)}
-            sx={{ mt: 2 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setTagDialogOpen(false)} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleAddTag} color="secondary">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={categoryDialogOpen}
-        onClose={() => setCategoryDialogOpen(false)}
-      >
-        <DialogTitle>Add New Category</DialogTitle>
-        <DialogContent>
-          <TextField
-            fullWidth
-            variant="filled"
-            label="New Category"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            sx={{ mt: 2 }}
-          />
-          <TextField
-            fullWidth
-            variant="filled"
-            type="text"
-            label="Slug"
-            value={categorySlug}
-            onChange={(e) => setCategorySlug(e.target.value)}
-            sx={{ mt: 2 }}
-          />
-          <TextField
-            fullWidth
-            variant="filled"
-            type="text"
-            label="Description"
-            value={categoryDescription}
-            onChange={(e) => setCategoryDescription(e.target.value)}
-            sx={{ mt: 2 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setCategoryDialogOpen(false)}
-            color="secondary"
-          >
-            Cancel
-          </Button>
-          <Button onClick={handleAddCategory} color="secondary">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog
-        open={authorDialogOpen}
-        onClose={() => setAuthorDialogOpen(false)}
-      >
-        <DialogTitle>Add New Author</DialogTitle>
-        <DialogContent>
-          <TextField
-            fullWidth
-            variant="filled"
-            label="New Author"
-            value={newAuthor}
-            onChange={(e) => setNewAuthor(e.target.value)}
-            sx={{ mt: 2 }}
-          />
-          <TextField
-            fullWidth
-            variant="filled"
-            type="text"
-            label="Slug"
-            value={authorSlug}
-            onChange={(e) => setAuthorSlug(e.target.value)}
-            sx={{ mt: 2 }}
-          />
-          <TextField
-            fullWidth
-            variant="filled"
-            type="text"
-            label="Description"
-            value={authorDescription}
-            onChange={(e) => setAuthorDescription(e.target.value)}
-            sx={{ mt: 2 }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setAuthorDialogOpen(false)} color="secondary">
-            Cancel
-          </Button>
-          <Button onClick={handleAddAuthor} color="secondary">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog open={tagDialogOpen} onClose={() => setTagDialogOpen(false)}>
+          <DialogTitle>Add New Tag</DialogTitle>
+          <DialogContent>
+            <TextField
+              fullWidth
+              variant="filled"
+              label="New Tag"
+              value={newTag}
+              onChange={(e) => setNewTag(e.target.value)}
+              sx={{ mt: 2 }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Slug"
+              value={tagSlug}
+              onChange={(e) => setTagSlug(e.target.value)}
+              sx={{ mt: 2 }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Description"
+              value={tagDescription}
+              onChange={(e) => setTagDescription(e.target.value)}
+              sx={{ mt: 2 }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setTagDialogOpen(false)} color="secondary">
+              Cancel
+            </Button>
+            <Button onClick={handleAddTag} color="secondary">
+              Add
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={categoryDialogOpen}
+          onClose={() => setCategoryDialogOpen(false)}
+        >
+          <DialogTitle>Add New Category</DialogTitle>
+          <DialogContent>
+            <TextField
+              fullWidth
+              variant="filled"
+              label="New Category"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              sx={{ mt: 2 }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Slug"
+              value={categorySlug}
+              onChange={(e) => setCategorySlug(e.target.value)}
+              sx={{ mt: 2 }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Description"
+              value={categoryDescription}
+              onChange={(e) => setCategoryDescription(e.target.value)}
+              sx={{ mt: 2 }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setCategoryDialogOpen(false)}
+              color="secondary"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleAddCategory} color="secondary">
+              Add
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={authorDialogOpen}
+          onClose={() => setAuthorDialogOpen(false)}
+        >
+          <DialogTitle>Add New Author</DialogTitle>
+          <DialogContent>
+            <TextField
+              fullWidth
+              variant="filled"
+              label="New Author"
+              value={newAuthor}
+              onChange={(e) => setNewAuthor(e.target.value)}
+              sx={{ mt: 2 }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Slug"
+              value={authorSlug}
+              onChange={(e) => setAuthorSlug(e.target.value)}
+              sx={{ mt: 2 }}
+            />
+            <TextField
+              fullWidth
+              variant="filled"
+              type="text"
+              label="Description"
+              value={authorDescription}
+              onChange={(e) => setAuthorDescription(e.target.value)}
+              sx={{ mt: 2 }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={() => setAuthorDialogOpen(false)}
+              color="secondary"
+            >
+              Cancel
+            </Button>
+            <Button onClick={handleAddAuthor} color="secondary">
+              Add
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </div>
   );
 };

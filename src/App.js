@@ -6,7 +6,6 @@ import Sidebar from "./Components/Sidebar/Sidebar";
 import { useRef, useState } from "react";
 import CreateBlog from "./Screens/CreateBlog/CreateBlog";
 import SearchBar from "./Components/SearchBar/SearchBar";
-import HeadTitle from "./Components/HeadTitle/HeadTitle";
 import ShowBlogs from "./Screens/ShowBlogs/ShowBlogs";
 import BlogDetails from "./Screens/BlogDetails/BlogDetails";
 import Tags from "./Screens/Tags/Tags";
@@ -28,14 +27,11 @@ function App() {
       <Header sidebar={sidebar} isOpen={isOpen} setIsOpen={setIsOpen} removeSidebar={removeSidebar} />
       <div className="hero">
         <div>
-          <HeadTitle headTitle={headTitle} />
-        </div>
-        <div>
           <Sidebar sidebar={sidebar} removeSidebar={removeSidebar} />
           <Routes>
             <Route path="/" element={<Dashboard setHeadTitle = {setHeadTitle} />} />
             <Route path="/createblog" element={<CreateBlog setHeadTitle = {setHeadTitle} mode={mode} setMode={setMode}/>} />
-            <Route path="/showblog" element={<ShowBlogs setHeadTitle = {setHeadTitle} query={query} setQuery={setQuery} mode={mode} setMode={setMode} />} />
+            <Route path="/showblog" element={<ShowBlogs setHeadTitle = {setHeadTitle} query={query} setQuery={setQuery} mode={mode} setMode={setMode} headTitle={headTitle} />} />
             <Route path="/blog/:id" element={<BlogDetails setHeadTitle = {setHeadTitle}/>}/>
             <Route path="/tags" element={<Tags setHeadTitle = {setHeadTitle}/>}/>
             <Route path="/categories" element={<Categories setHeadTitle = {setHeadTitle}/>}/>

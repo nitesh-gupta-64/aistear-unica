@@ -35,24 +35,39 @@ button, a {
   cursor: pointer;
 }
 
-.sidebar + div {
-  width: 76%;
+.sidebar + div > div:nth-last-child(1) {
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   box-shadow: 2px 4px 30px 0px #00000040;
 }
 
-.hero > div:nth-child(2) {
+.sidebar + div > div:nth-child(1) {
   display: flex;
-  justify-content: left;
-  gap: 1rem;
+  flex-direction: column;
+  width: 100%;
+}
+
+.sidebar + div > div:nth-child(1) > h1 {
+  margin-bottom: 2.5rem;
+  font-size: 2.2rem;
+  font-weight: 600;
+}
+
+.sidebar + div {
+  display: flex;
+  flex-direction: column;
+  margin-right: 2rem;
+  width: 76%;
+  height: 100%;
+  margin-top: 6.5rem;
 }
 
 .hero > div:nth-child(1) {
-  height: 5rem;
   display: flex;
-  gap: 5rem;
+  justify-content: right;
+  gap: 1rem;
 }
 
 input, textarea, select {

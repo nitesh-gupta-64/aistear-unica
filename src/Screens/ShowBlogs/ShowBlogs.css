@@ -1,20 +1,19 @@
 .showBlogs {
   padding: 1rem;
-  margin-top: 3rem;
 }
 
-.showBlogs button {
+.showBlogsPage button {
   color: black;
   font-size: 0.8rem;
   border: 1px solid black;
 }
 
-.showBlogs button:disabled {
+.showBlogsPage button:disabled {
   color: rgba(0, 0, 0, 0.500);
   border: 1px solid rgba(0, 0, 0, 0.500);
 }
 
-.showBlogs button:hover {
+.showBlogsPage button:hover {
   border-color: #F496AC;
   background-color: #F496AC1F;
 }
@@ -66,13 +65,11 @@
 }
 
 .buttonLayout {
-  width: 72%;
+  width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: left;
   gap: 2rem;
   margin: 1rem;
-  position: absolute;
-  top: 10rem;
 }
 
 @media screen and (max-width: 1000px) {
