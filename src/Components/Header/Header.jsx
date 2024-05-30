@@ -4,7 +4,6 @@ import './Header.css'
 const Header = ( { sidebar, isOpen, setIsOpen, removeSidebar } ) => {
 
   const toggle = useRef(null)
-
   const toggleHandler = () => {
       
     if (isOpen) {

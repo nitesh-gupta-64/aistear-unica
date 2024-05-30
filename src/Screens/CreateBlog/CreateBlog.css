@@ -70,8 +70,30 @@
   height: 2rem;
 }
 
-.createBlogForm button:hover {
+.createBlogForm button:hover, .createBlogPage button:hover {
   background-color: #fe7998;
+}
+
+.createBlogPage button {
+  background-color: #f496ac;
+  color: white;
+  margin: 0.5rem 0;
+  height: 2rem;
+}
+
+.uploadImg {
+  width: 95%;
+  background-color: #f496ac2d;
+  border: 1px solid #f496ac;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 0.2rem;
+  cursor: pointer;
+  gap: 1rem;
+  padding: 1rem;
+  color: rgba(0, 0, 0, 0.548);
 }
 
 .editor {

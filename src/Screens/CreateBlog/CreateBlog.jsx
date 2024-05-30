@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./CreateBlog.css";
 import { Editor } from "@tinymce/tinymce-react";
 import { ClipLoader } from "react-spinners";
+import { styled } from "@mui/material/styles";
+import AddPhotoAlternateOutlinedIcon from "@mui/icons-material/AddPhotoAlternateOutlined";
 import {
   Container,
   Typography,
@@ -86,8 +88,21 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
   const [authorDescription, setAuthorDescription] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [blogs, setBlogs] = useState([]);
   const [type, setType] = useState("");
+
+  const StyledButton = styled(Button)(({ theme }) => ({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f496ac",
+    color: "white",
+    margin: "1rem",
+    "&:hover": {
+      backgroundColor: "#fe7998",
+      borderColor: "#fe7998",
+      color: "white",
+    },
+  }));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -501,15 +516,26 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
           </div>
           <div>
             <label>Is featured</label>
-            <input
-              type="text"
+            <TextField
+              style={{ width: "95%" }}
+              fullWidth
+              variant="outlined"
+              select
               value={isFeatured}
               onChange={(e) => setIsFeatured(e.target.value)}
-            />
+              sx={{ mb: 2 }}
+            >
+              <MenuItem value="Yes">Yes</MenuItem>
+              <MenuItem value="No">No</MenuItem>
+            </TextField>
             <label>Featured Image</label>
-            <Button color="success" onClick={() => handleOpenDialog("image")}>
-              Upload Image
-            </Button>
+            <span
+              className="uploadImg"
+              onClick={() => handleOpenDialog("image")}
+            >
+              <AddPhotoAlternateOutlinedIcon sx={{ fontSize: "6rem" }} />
+              <p>Upload Image</p>
+            </span>
             {image && <Typography variant="body2">{image.name}</Typography>}
             {imagePreview && (
               <img
@@ -643,13 +669,13 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
                 ))}
               </TextField>
               <label>SEO Image</label>
-              <Button
-                style={{ width: "100%" }}
-                color="success"
+              <span
+                className="uploadImg"
                 onClick={() => handleOpenDialog("seoImage")}
               >
-                Upload SEO Image
-              </Button>
+                <AddPhotoAlternateOutlinedIcon sx={{ fontSize: "6rem" }} />
+                <p>Upload SEO Image</p>
+              </span>
               {seoImage && (
                 <Typography variant="body2">{seoImage.name}</Typography>
               )}
@@ -704,6 +730,8 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            marginLeft: "10rem",
+            marginTop: "5rem",
           }}
         >
           <Box
@@ -712,20 +740,36 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
             alignItems="center"
             sx={{ p: 2 }}
           >
-            <Button
-              color="secondary"
+            <StyledButton
               variant={archiveOrUpload === "upload" ? "contained" : "outlined"}
               onClick={() => setArchiveOrUpload("upload")}
+              sx={
+                archiveOrUpload === "upload"
+                  ? {}
+                  : {
+                      backgroundColor: "transparent",
+                      borderColor: "#f496ac",
+                      color: "#f496ac",
+                    }
+              }
             >
               Upload
-            </Button>
-            <Button
-              color="secondary"
+            </StyledButton>
+            <StyledButton
               variant={archiveOrUpload === "upload" ? "outlined" : "contained"}
               onClick={() => setArchiveOrUpload("archive")}
+              sx={
+                archiveOrUpload === "archive"
+                  ? {}
+                  : {
+                      backgroundColor: "transparent",
+                      borderColor: "#f496ac",
+                      color: "#f496ac",
+                    }
+              }
             >
               Archive
-            </Button>
+            </StyledButton>
           </Box>
 
           {archiveOrUpload === "upload" ? (
@@ -735,7 +779,14 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
                 display="flex"
                 justifyContent={"center"}
                 alignItems={"center"}
-                style={{ cursor: "pointer", width: 200, height: 200 }}
+                style={{
+                  cursor: "pointer",
+                  width: 500,
+                  height: 300,
+                  backgroundColor: "#f496ac2d",
+                  margin: "2rem",
+                  border: "1px solid #f496ac",
+                }}
               >
                 <CloudUploadIcon />
                 <Typography
@@ -774,6 +825,7 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
               justifyContent={"center"}
               alignItems={"center"}
               flexWrap={"wrap"}
+              style={{ cursor: "pointer", width: 590, height: 2000 }}
             >
               <label htmlFor="file-archive-upload">
                 <Paper sx={{ p: 2, m: 1, cursor: "pointer" }}>
@@ -781,8 +833,8 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
                     src={addIcon}
                     alt="Archive"
                     style={{
-                      width: 200,
-                      height: 200,
+                      width: 90,
+                      height: 90,
                       objectFit: "contain",
                     }}
                   />
@@ -807,8 +859,8 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
                     src={item.ImageUrl}
                     alt="Archive"
                     style={{
-                      width: 200,
-                      height: 200,
+                      width: 90,
+                      height: 90,
                       objectFit: "contain",
                     }}
                   />
@@ -849,12 +901,12 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setTagDialogOpen(false)} color="secondary">
+            <StyledButton onClick={() => setTagDialogOpen(false)}>
               Cancel
-            </Button>
-            <Button onClick={handleAddTag} color="secondary">
+            </StyledButton>
+            <StyledButton onClick={handleAddTag} color="secondary">
               Add
-            </Button>
+            </StyledButton>
           </DialogActions>
         </Dialog>
         <Dialog
@@ -891,15 +943,15 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
             />
           </DialogContent>
           <DialogActions>
-            <Button
+            <StyledButton
               onClick={() => setCategoryDialogOpen(false)}
               color="secondary"
             >
               Cancel
-            </Button>
-            <Button onClick={handleAddCategory} color="secondary">
+            </StyledButton>
+            <StyledButton onClick={handleAddCategory} color="secondary">
               Add
-            </Button>
+            </StyledButton>
           </DialogActions>
         </Dialog>
         <Dialog
@@ -936,15 +988,15 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
             />
           </DialogContent>
           <DialogActions>
-            <Button
+            <StyledButton
               onClick={() => setAuthorDialogOpen(false)}
               color="secondary"
             >
               Cancel
-            </Button>
-            <Button onClick={handleAddAuthor} color="secondary">
+            </StyledButton>
+            <StyledButton onClick={handleAddAuthor} color="secondary">
               Add
-            </Button>
+            </StyledButton>
           </DialogActions>
         </Dialog>
       </div>

@@ -1,5 +1,5 @@
 .sidebar {
-    width: 19rem;
+    width: 16rem;
     height: 100%;
     background-color:#F496AC1F;
     display: flex;
@@ -94,8 +94,9 @@
 
     .sidebar + div {
         width: 90%;
+        margin-right: 0;
     }
-    .hero > div:nth-child(2) {
+    .hero > div:nth-child(1) {
         justify-content: center;
     }
 }
