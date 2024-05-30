@@ -75,7 +75,8 @@
 @media screen and (max-width: 1000px) {
   .buttonLayout {
     width: 90%;
-    position: static;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
   .showBlogs {
     margin-top: 0;
