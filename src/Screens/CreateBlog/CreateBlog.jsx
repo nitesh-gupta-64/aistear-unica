@@ -724,14 +724,27 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
           open={openDialog}
           onClose={handleCloseDialog}
           sx={{
-            height: "80%",
-            width: "80%",
+            height: "100%",
+            width: "100%",
             overflow: "auto",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            marginLeft: "10rem",
-            marginTop: "5rem",
+            // marginLeft: "10rem",
+            // marginTop: "5rem",
+            // position: 'absolute',
+            // top: '50%',
+            // left: '50%',
+            // transform: 'translate(-50%, -50%)',
+          }}
+          PaperProps={{
+            style: {
+              margin: 0,
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+            },
           }}
         >
           <Box
@@ -779,13 +792,17 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
                 display="flex"
                 justifyContent={"center"}
                 alignItems={"center"}
-                style={{
+                sx={{
                   cursor: "pointer",
                   width: 500,
                   height: 300,
                   backgroundColor: "#f496ac2d",
                   margin: "2rem",
                   border: "1px solid #f496ac",
+                  "@media (max-width:800px)": {
+                    width: 250,
+                    height: 200,
+                  },
                 }}
               >
                 <CloudUploadIcon />
@@ -825,7 +842,14 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
               justifyContent={"center"}
               alignItems={"center"}
               flexWrap={"wrap"}
-              style={{ cursor: "pointer", width: 590, height: 2000 }}
+              sx={{
+                cursor: "pointer",
+                width: 580,
+                height: 500,
+                "@media (max-width:800px)": {
+                  width: 300,
+                },
+              }}
             >
               <label htmlFor="file-archive-upload">
                 <Paper sx={{ p: 2, m: 1, cursor: "pointer" }}>
@@ -833,8 +857,8 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
                     src={addIcon}
                     alt="Archive"
                     style={{
-                      width: 90,
-                      height: 90,
+                      width: 80,
+                      height: 80,
                       objectFit: "contain",
                     }}
                   />
@@ -859,8 +883,8 @@ const CreateBlog = ({ setHeadTitle, mode, setMode }) => {
                     src={item.ImageUrl}
                     alt="Archive"
                     style={{
-                      width: 90,
-                      height: 90,
+                      width: 80,
+                      height: 80,
                       objectFit: "contain",
                     }}
                   />
